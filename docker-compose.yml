@@ -1,0 +1,72 @@
+version: "3"
+networks: 
+  default:
+    ipam:
+      config:
+        - subnet: "172.10.0.0/24"
+services:
+  nginx:
+    image: nginx:${NGINX_VERSION}
+    ports:
+      - "${NGINX_HTTP_HOST_PORT}:80"
+      - "${NGINX_HTTPS_HOST_PORT}:443"
+    volumes:
+      - ${NGINX_SOURCE_DIR}:/var/www/html/:rw
+      - ${NGINX_CONFD_DIR}:/etc/nginx/conf.d/:rw
+      - ${NGINX_CONF_FILE}:/etc/nginx/nginx.conf:ro
+      - ${NGINX_LOG_DIR}:/var/log/nginx/:rw
+    restart: always
+    networks:
+      - default
+
+  php73:
+    build:
+      context: ./php73
+      args:
+        PHP73_VERSION: ${PHP73_VERSION}
+        PHP73_XDEBUG: ${PHP73_XDEBUG}
+        PHP73_REDIS: ${PHP73_REDIS}
+    volumes:
+      - ${PHP73_SOURCE_DIR}:/var/www/html/:rw
+      - ${PHP73_PHP_CONF_FILE}:/usr/local/etc/php/php.ini:ro
+      - ${PHP73_FPM_CONF_FILE}:/usr/local/etc/php-fpm.d/www.conf:rw
+      - ${PHP73_LOG_DIR}:/var/log/php:rw
+    restart: always
+    cap_add:
+      - SYS_PTRACE
+    extra_hosts:
+      - "${PHP73_DOMAIN1}:${NGINX_IPV4}"
+      - "${PHP73_DOMAIN2}:${NGINX_IPV4}"
+    networks: 
+      - default
+  mysql57:
+    image: mysql:${MYSQL57_VERSION}
+    ports:
+      - "${MYSQL57_HOST_PORT}:3306"
+    volumes:
+      - ${MYSQL57_CONF_FILE}:/etc/mysql/conf.d/mysql.cnf:ro
+      - ${MYSQL57_DATA_DIR}:/var/lib/mysql/:rw
+    restart: always
+    cap_add:
+      - SYS_PTRACE
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL57_ROOT_PASSWORD}"
+    networks:
+      - default
+
+  redis:
+    image: redis:${REDIS_VERSION}
+    ports:
+      - "${REDIS_HOST_PORT}:6379"
+    volumes:
+      - ${REDIS_CONF_FILE}:/etc/redis.conf:ro
+    restart: always
+    cap_add:
+      - SYS_PTRACE
+    entrypoint: ["redis-server", "/etc/redis.conf"]
+    networks:
+      - default
+
+
+
+

@@ -1,0 +1,6 @@
+.idea
+.env
+log/*
+mysql57/data/
+www/*
+!www/localhost/
