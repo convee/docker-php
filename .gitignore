@@ -4,3 +4,4 @@ log/*
 mysql57/data/
 www/*
 !www/localhost/
+nginx/*

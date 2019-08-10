@@ -1,0 +1,4 @@
+*
+!.gitignore
+!conf.d/localhost.conf
+!nginx.conf
