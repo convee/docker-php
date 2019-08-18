@@ -1,4 +1,4 @@
-#Docker + Nginx1.15.7 + MySQL5.7 + PHP7.3 + Redis5.0.3
+# Docker + Nginx1.15.7 + MySQL5.7 + PHP7.3 + Redis5.0.3
 
 # 目录结构
 ```
